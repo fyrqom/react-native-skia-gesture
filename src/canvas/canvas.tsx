@@ -16,13 +16,11 @@ import type { CanvasProps } from '@shopify/react-native-skia';
 
 type TouchableCanvasProps = CanvasProps & {
   tapGesture?: TapGesture;
-  timeoutBeforeCollectingRefs?: number; // default 100
 };
 
 const Canvas: React.FC<TouchableCanvasProps> = ({
   children,
   tapGesture = Gesture.Tap(),
-  timeoutBeforeCollectingRefs = 100,
   ...props
 }) => {
   // Instead of value, provide a subscribe method and reload the refs
@@ -32,31 +30,13 @@ const Canvas: React.FC<TouchableCanvasProps> = ({
 
   const activeKey = useSharedValue<string[]>([]);
 
-  // This must be improved, it's a hack to wait for the refs to be loaded
-  const [loadedRefs, prepareLoadedRefs] = useState<
-    TouchableHandlerContextType['value']
-  >({});
-
-  const ref = useRef<NodeJS.Timeout>();
-
-  useEffect(() => {
-    ref.current = setTimeout(() => {
-      prepareLoadedRefs(touchableRefs.value);
-    }, timeoutBeforeCollectingRefs);
-
-    return () => {
-      clearTimeout(ref.current);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [touchableRefs, timeoutBeforeCollectingRefs]);
-
   const mainGesture = tapGesture
     .onBegin((event) => {
       'worklet';
-      const keys = Object.keys(loadedRefs);
+      const keys = Object.keys(touchableRefs.value);
       for (let i = 0; i < keys.length; i++) {
         const key = keys[i] as string;
-        const touchableItem = loadedRefs[key];
+        const touchableItem = touchableRefs.value[key];
         const isPointInPath = touchableItem?.isPointInPath(event);
         if (isPointInPath && touchableItem?.onStart) {
           activeKey.value = [`${key}__${event.handlerTag}`];
@@ -76,7 +56,7 @@ const Canvas: React.FC<TouchableCanvasProps> = ({
       if (!indexedKey) {
         return;
       }
-      const touchableItem = loadedRefs[indexedKey];
+      const touchableItem = touchableRefs.value[indexedKey];
       activeKey.value = activeKey.value.filter(
         (key) => !key.includes(event.handlerTag.toString())
       );
