@@ -11,12 +11,15 @@ export type TouchableHandlerContextType = {
     string,
     {
       onStart: (
-        touchInfo: GestureStateChangeEvent<TapGestureHandlerEventPayload>
+        touchInfo: GestureStateChangeEvent<TapGestureHandlerEventPayload>,
+        touchKey: any
       ) => void;
       onEnd: (
-        touchInfo: GestureStateChangeEvent<TapGestureHandlerEventPayload>
+        touchInfo: GestureStateChangeEvent<TapGestureHandlerEventPayload>,
+        touchKey: any
       ) => void;
       isPointInPath: (point: Vector) => boolean;
+      touchKey: any;
     }
   >;
 };

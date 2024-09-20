@@ -18,15 +18,19 @@ import { SharedValue } from 'react-native-reanimated';
 
 export type TouchableHandlerProps = {
   onStart: (
-    touchInfo: GestureStateChangeEvent<TapGestureHandlerEventPayload>
+    touchInfo: GestureStateChangeEvent<TapGestureHandlerEventPayload>,
+    touchKey: any
   ) => void;
   onActive: (
-    touchInfo: GestureUpdateEvent<TapGestureHandlerEventPayload>
+    touchInfo: GestureUpdateEvent<TapGestureHandlerEventPayload>,
+    touchKey: any
   ) => void;
   onEnd: (
-    touchInfo: GestureStateChangeEvent<TapGestureHandlerEventPayload>
+    touchInfo: GestureStateChangeEvent<TapGestureHandlerEventPayload>,
+    touchKey: any
   ) => void;
   touchablePath: SkPath | SharedValue<SkPath>;
+  touchKey: any;
 };
 
 type WithTouchableHandlerProps<T> = T & Partial<TouchableHandlerProps>;
@@ -58,6 +62,7 @@ const withTouchableHandler = <T,>(
     onActive: onActiveProp,
     onEnd: onEndProp,
     touchablePath,
+    touchKey,
     ...props
   }: WithTouchableHandlerProps<T>) => {
     const id = useId();
@@ -66,14 +71,14 @@ const withTouchableHandler = <T,>(
     const onStart: TouchableHandlerProps['onStart'] = useCallback(
       (event) => {
         'worklet';
-        return onStartProp?.(event);
+        return onStartProp?.(event, touchKey);
       },
       [onStartProp]
     );
     const onEnd: TouchableHandlerProps['onEnd'] = useCallback(
       (event) => {
         'worklet';
-        return onEndProp?.(event);
+        return onEndProp?.(event, touchKey);
       },
       [onEndProp]
     );
@@ -102,6 +107,7 @@ const withTouchableHandler = <T,>(
           isPointInPath,
           onStart,
           onEnd,
+          touchKey,
         },
         ...ref.value,
       } as any;

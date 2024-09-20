@@ -7,10 +7,12 @@ import type {
 
 type UseGestureHandlerParams = {
   onStart?: (
-    touchInfo: GestureStateChangeEvent<TapGestureHandlerEventPayload>
+    touchInfo: GestureStateChangeEvent<TapGestureHandlerEventPayload>,
+    touchKey: any,
   ) => void;
   onEnd?: (
-    touchInfo: GestureStateChangeEvent<TapGestureHandlerEventPayload>
+    touchInfo: GestureStateChangeEvent<TapGestureHandlerEventPayload>,
+    touchKey: any,
   ) => void;
 };
 
@@ -18,20 +20,21 @@ const useGestureHandler = (gestureHandlers: UseGestureHandlerParams) => {
   const { onStart, onEnd } = gestureHandlers;
 
   const handleStart = useCallback(
-    (touchInfo: GestureStateChangeEvent<TapGestureHandlerEventPayload>) => {
+    (touchInfo: GestureStateChangeEvent<TapGestureHandlerEventPayload>, touchKey: any) => {
       'worklet';
       if (!onStart) return;
-      return onStart(touchInfo);
+      return onStart(touchInfo, touchKey);
     },
     [onStart]
   );
   const handleEnd = useCallback(
     (
-      extendedTouchInfo: GestureStateChangeEvent<TapGestureHandlerEventPayload>
+      extendedTouchInfo: GestureStateChangeEvent<TapGestureHandlerEventPayload>,
+      touchKey: any
     ) => {
       'worklet';
       if (!onEnd) return;
-      return onEnd(extendedTouchInfo);
+      return onEnd(extendedTouchInfo, touchKey);
     },
     [onEnd]
   );

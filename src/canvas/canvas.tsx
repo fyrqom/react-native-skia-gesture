@@ -1,5 +1,5 @@
 import { Canvas as SkiaCanvas } from '@shopify/react-native-skia';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import {
   Gesture,
   GestureDetector,
@@ -40,7 +40,7 @@ const Canvas: React.FC<TouchableCanvasProps> = ({
         const isPointInPath = touchableItem?.isPointInPath(event);
         if (isPointInPath && touchableItem?.onStart) {
           activeKey.value = [`${key}__${event.handlerTag}`];
-          touchableItem.onStart?.(event);
+          touchableItem.onStart?.(event, touchableItem.touchKey);
         }
       }
     })
@@ -60,7 +60,7 @@ const Canvas: React.FC<TouchableCanvasProps> = ({
       activeKey.value = activeKey.value.filter(
         (key) => !key.includes(event.handlerTag.toString())
       );
-      return touchableItem?.onEnd?.(event as any);
+      return touchableItem?.onEnd?.(event as any, touchableItem.touchKey);
     });
 
   useEffect(() => {
