@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Gesture,
   GestureDetector,
-  PanGesture,
+  TapGesture,
 } from 'react-native-gesture-handler';
 import { useSharedValue } from 'react-native-reanimated';
 
@@ -15,13 +15,13 @@ import {
 import type { CanvasProps } from '@shopify/react-native-skia';
 
 type TouchableCanvasProps = CanvasProps & {
-  panGesture?: PanGesture;
+  tapGesture?: TapGesture;
   timeoutBeforeCollectingRefs?: number; // default 100
 };
 
 const Canvas: React.FC<TouchableCanvasProps> = ({
   children,
-  panGesture = Gesture.Pan(),
+  tapGesture = Gesture.Tap(),
   timeoutBeforeCollectingRefs = 100,
   ...props
 }) => {
@@ -48,9 +48,9 @@ const Canvas: React.FC<TouchableCanvasProps> = ({
       clearTimeout(ref.current);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [timeoutBeforeCollectingRefs]);
+  }, [touchableRefs, timeoutBeforeCollectingRefs]);
 
-  const mainGesture = panGesture
+  const mainGesture = tapGesture
     .onBegin((event) => {
       'worklet';
       const keys = Object.keys(loadedRefs);
@@ -64,25 +64,7 @@ const Canvas: React.FC<TouchableCanvasProps> = ({
         }
       }
     })
-    .onUpdate((event) => {
-      'worklet';
-      const activatedKey = activeKey.value.find((key) =>
-        key.includes(event.handlerTag.toString())
-      );
-
-      if (!activatedKey) {
-        return;
-      }
-      const indexedKey = activatedKey.split('__')?.[0];
-
-      if (!indexedKey) {
-        return;
-      }
-      const touchableItem = loadedRefs[indexedKey];
-
-      return touchableItem?.onActive?.(event);
-    })
-    .onFinalize((event) => {
+    .onEnd((event) => {
       'worklet';
       const activatedKey = activeKey.value.find((key) =>
         key.includes(event.handlerTag.toString())

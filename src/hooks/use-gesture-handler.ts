@@ -2,46 +2,32 @@ import { useCallback } from 'react';
 
 import type {
   GestureStateChangeEvent,
-  GestureUpdateEvent,
-  PanGestureHandlerEventPayload,
+  TapGestureHandlerEventPayload,
 } from 'react-native-gesture-handler';
 
 type UseGestureHandlerParams = {
   onStart?: (
-    touchInfo: GestureStateChangeEvent<PanGestureHandlerEventPayload>
-  ) => void;
-  onActive?: (
-    touchInfo: GestureUpdateEvent<PanGestureHandlerEventPayload>
+    touchInfo: GestureStateChangeEvent<TapGestureHandlerEventPayload>
   ) => void;
   onEnd?: (
-    touchInfo: GestureStateChangeEvent<PanGestureHandlerEventPayload>
+    touchInfo: GestureStateChangeEvent<TapGestureHandlerEventPayload>
   ) => void;
 };
 
 const useGestureHandler = (gestureHandlers: UseGestureHandlerParams) => {
-  const { onStart, onActive, onEnd } = gestureHandlers;
+  const { onStart, onEnd } = gestureHandlers;
 
   const handleStart = useCallback(
-    (touchInfo: GestureStateChangeEvent<PanGestureHandlerEventPayload>) => {
+    (touchInfo: GestureStateChangeEvent<TapGestureHandlerEventPayload>) => {
       'worklet';
       if (!onStart) return;
       return onStart(touchInfo);
     },
     [onStart]
   );
-
-  const handleActive = useCallback(
-    (extendedTouchInfo: GestureUpdateEvent<PanGestureHandlerEventPayload>) => {
-      'worklet';
-      if (!onActive) return;
-      return onActive(extendedTouchInfo);
-    },
-    [onActive]
-  );
-
   const handleEnd = useCallback(
     (
-      extendedTouchInfo: GestureStateChangeEvent<PanGestureHandlerEventPayload>
+      extendedTouchInfo: GestureStateChangeEvent<TapGestureHandlerEventPayload>
     ) => {
       'worklet';
       if (!onEnd) return;
@@ -52,7 +38,6 @@ const useGestureHandler = (gestureHandlers: UseGestureHandlerParams) => {
 
   return {
     onStart: handleStart,
-    onActive: handleActive,
     onEnd: handleEnd,
   };
 };

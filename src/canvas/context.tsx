@@ -3,8 +3,7 @@ import React, { useContext } from 'react';
 import type { Vector } from '@shopify/react-native-skia';
 import type {
   GestureStateChangeEvent,
-  GestureUpdateEvent,
-  PanGestureHandlerEventPayload,
+  TapGestureHandlerEventPayload,
 } from 'react-native-gesture-handler';
 
 export type TouchableHandlerContextType = {
@@ -12,13 +11,10 @@ export type TouchableHandlerContextType = {
     string,
     {
       onStart: (
-        touchInfo: GestureStateChangeEvent<PanGestureHandlerEventPayload>
-      ) => void;
-      onActive: (
-        touchInfo: GestureUpdateEvent<PanGestureHandlerEventPayload>
+        touchInfo: GestureStateChangeEvent<TapGestureHandlerEventPayload>
       ) => void;
       onEnd: (
-        touchInfo: GestureStateChangeEvent<PanGestureHandlerEventPayload>
+        touchInfo: GestureStateChangeEvent<TapGestureHandlerEventPayload>
       ) => void;
       isPointInPath: (point: Vector) => boolean;
     }
